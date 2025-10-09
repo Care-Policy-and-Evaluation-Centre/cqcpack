@@ -45,6 +45,13 @@ jobs:
           any::usethis
           any::roxygen2
           any::desc
+          any::httr
+          any::jsonlite
+          any::dplyr
+          any::purrr
+          any::stringr
+          any::tibble
+          any::data.table
     
     - name: Run update based on data age
       run: |
@@ -108,7 +115,7 @@ jobs:
     
     - name: Upload package artifact
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cqcpack-${{ github.run_number }}
         path: cqcpack_*.tar.gz
