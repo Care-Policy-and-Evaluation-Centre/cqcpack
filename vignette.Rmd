@@ -1,0 +1,165 @@
+---
+title: "CQC Requests Package"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What is CQC?
+
+The Care Quality Commission (CQC) is the independent regulator of health and social care services in England. It monitors, inspects, and rates services to ensure they meet fundamental standards of quality and safety. The CQC oversees a wide range of care providers including hospitals, GP practices, care homes, dental practices, ambulance services, and mental health services. Their ratings system (Outstanding, Good, inadequate and needs improvement) helps the public make informed choices about their care while also attempting to encourage improvement across the sector.
+
+## What does this package cover? 
+
+The ```cqcrpack``` package provides a complete toolkit for accessing and managing CQC regulatory data. It covers both location-level data (individual care facilities and services) and provider-level data (organizations that run these services). The package handles the full data lifecycle including initial bulk data collection, caching for efficiency, incremental updates to keep data current, and merging capabilities to create comprehensive datasets linking providers with their locations. It also supports querying specific provider or location IDs for detailed information.
+
+## Where does this pacakge get its data from?
+
+The package retrieves data directly from the official CQC API endpoints. It systematically accesses the CQC's public API to download comprehensive datasets about providers and locations, including their registration details, ratings, inspection dates, and service characteristics. The package implements intelligent caching mechanisms, storing JSON responses locally to minimize API calls and improve performance while ensuring data can be updated incrementally as changes occur.
+
+## Why do you need this pacakge?
+
+Working directly with the CQC API requires handling pagination, rate limits, JSON parsing, and complex data structures. This package eliminates these challenges by providing high-level functions that handle all the complexity behind the scenes. It offers efficient bulk data collection with local caching to avoid redundant API calls, automated incremental updates that capture only changes since the last data pull, built-in data transformation that converts nested JSON structures into analysis-ready dataframes, and the ability to merge provider and location data for comprehensive analysis. This makes it ideal for researchers conducting health services research, NHS organizations monitoring local care quality, policy analysts tracking sector-wide trends, or anyone building dashboards and monitoring systems.
+
+## What are the functions available in this package?
+
+The package provides a comprehensive set of functions organized by functionality:
+Caching Functions:
+
+```cache_location_ids()``` - Downloads and caches all location identifiers.
+```cache_location_jsons()``` - Fetches and stores detailed JSON data for all locations.
+```cache_provider_ids()``` - Downloads and caches all provider identifiers.
+```cache_provider_jsons()``` - Fetches and stores detailed JSON data for all providers.
+
+Data Building Functions:
+
+```build_location_df()``` - Constructs a dataframe from cached location JSON files
+```build_provider_df()``` - Constructs a dataframe from cached provider JSON files
+
+Update Functions:
+
+```get_incremental_changes()``` - Identifies changes since the last data collection
+```update_location_dataset()``` - Updates location data with recent changes
+```update_provider_dataset()``` - Updates provider data with recent changes
+
+Data Integration Functions:
+
+```merge_provider_location()``` - Combines provider and location datasets into a unified dataframe
+
+Query Functions:
+
+```get_cqc_id_info()``` - Retrieves detailed information for specific provider or location IDs
+
+These functions work together to provide a complete workflow from initial data collection through to maintaining an up-to-date, analysis-ready dataset of CQC regulatory information.
+
+## Installation and Getting Started
+
+### Installing the Package
+
+The cqcrpack package is distributed as a tar.gz file. To install it, you'll need to download the package file and install it locally:
+
+```{r install, eval=FALSE}
+# Define the path to your tar.gz file
+package_path <- "C:/Users/ritwi/London School of Economics/Local-Evaluations - London - cqc-api-2025/cqcrpack_0.1.2.tar.gz"
+
+# Install the package
+install.packages(package_path, repos = NULL, type = "source")
+
+# Load the package using just the package name
+library(cqcrpack)
+
+# Verify installation by checking package version
+packageVersion("cqcrpack")
+```
+
+### Loading the Latest Dataset
+
+Once installed, you can quickly load the most recent CQC data that has been cached with the package. The package comes with pre-built datasets that you can access immediately:
+
+```{r}
+library(cqcrpack)
+
+# Build location dataframe from the most recent cached data
+location_df <- build_location_df(update_mode = FALSE)
+
+# Check the structure
+dim(location_df)
+
+head(location_df[, 1:5], 3)
+
+# Build provider dataframe from the most recent cached data  
+provider_df <- build_provider_df()
+
+dim(provider_df)
+
+head(provider_df[, 1:4], 3)
+
+# Merge provider and location data for comprehensive analysis
+merged_data <- merge_provider_location()
+
+# View dimensions and sample
+dim(merged_data)
+
+head(merged_data, 5)
+```
+
+
+### Updating to Get the Very Latest Data
+
+If you need data that's more recent than what's cached in the package, you can update it with the latest changes from the CQC API:
+
+```{r}
+# Get incremental changes since the last data collection
+changes <- get_incremental_changes()
+
+str(changes, max.level = 2)
+
+# Update location dataset with recent changes
+update_location_dataset()
+
+# Update provider dataset with recent changes
+update_provider_dataset()
+
+# Get the updated merged dataset
+merged_data <- merge_provider_location()
+
+# Verify updates
+tail(merged_data[order(merged_data$date), c("locationName", "date")], 3)
+```
+
+
+### Here is a quick workflow to get you started: 
+
+```{r}
+# Install and load the package
+install.packages("path/to/cqcrpack_x.x.x.tar.gz", repos = NULL, type = "source")
+library(cqcrpack)
+
+# Load the latest pre-built data
+merged_data <- merge_provider_location()
+
+# Check the data
+dim(merged_data)
+
+names(merged_data)[1:10]
+
+# Summary of ratings
+table(merged_data$overallRating)
+
+# Optional: Update with the very latest changes
+update_location_dataset()
+
+update_provider_dataset()
+
+merged_data <- merge_provider_location()
+```
+
+# Users will not need to build or update. 
+# Main function is installing pacakge and get_cqc_id
+# Split into background work and frontline user
+
+# local install/github/AWS - TBD? 
+

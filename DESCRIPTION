@@ -1,0 +1,20 @@
+Package: cqcrpack
+Type: Package
+Title: Scrape Data from the CQC API
+Version: 0.1.2
+Authors@R: 
+    person(given = "Ritwika", family = "Das", role = c("aut", "cre"), email = "r.das7@lse.ac.uk")
+Description: An R package to scrape location and provider data from the CQC API using paginated endpoints.
+License: MIT + file LICENSE
+Imports: 
+    httr,
+    jsonlite,
+    dplyr
+Suggests:
+    testthat (>= 3.0.0)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+Depends: 
+    R (>= 4.2)
+DataBuilt: 2025-09-03
