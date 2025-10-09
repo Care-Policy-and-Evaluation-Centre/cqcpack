@@ -1,5 +1,5 @@
 
-if(interactive()) { # Dev-only file, not for R CMD CHECK
+if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, not for R CMD CHECK
 
 
 library(cqcrpack)

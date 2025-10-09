@@ -18,7 +18,7 @@
 # install.packages("C:/Users/DASR6/Desktop/cqc.rpack")
 # library(cqcrpack)
 
-if(interactive()) { # Dev-only file, not for R CMD CHECK
+if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, not for R CMD CHECK
 
 
 devtools::load_all()
