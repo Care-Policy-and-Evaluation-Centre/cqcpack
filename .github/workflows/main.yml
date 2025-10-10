@@ -52,6 +52,11 @@ jobs:
           any::stringr
           any::tibble
           any::data.table
+          any::withr
+    
+    - name: Install package
+      run: |
+        Rscript -e 'devtools::install(dependencies = TRUE)'
     
     - name: Run update based on data age
       run: |
