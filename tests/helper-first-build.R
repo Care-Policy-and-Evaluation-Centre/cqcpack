@@ -1,4 +1,4 @@
-# custom_lib <- "C:/Users/DASR6/Desktop/cqc.rpack/Rlibs"
+# custom_lib <- "C:/Users/DASR6/Desktop/cqcpack/Rlibs"
 # dir.create(custom_lib, recursive = TRUE, showWarnings = FALSE)
 # .libPaths(c(custom_lib, .libPaths()))
 # .libPaths()
