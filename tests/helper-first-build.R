@@ -16,16 +16,14 @@
 # devtools::build(pkg_path)
 # devtools::install(pkg_path)
 # install.packages("C:/Users/DASR6/Desktop/cqc.rpack")
-# library(cqcrpack)
+# library(cqcpack)
 
 if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, not for R CMD CHECK
-
-
-devtools::load_all()
-devtools::check()
-devtools::build()
-devtools::install()
-library(cqcrpack)
+  devtools::load_all()
+  devtools::check()
+  devtools::build()
+  devtools::install()
+  library(cqcpack)
 
 #-------------------------------------------------------------------------------
 # CACHING AND BUILDING DF

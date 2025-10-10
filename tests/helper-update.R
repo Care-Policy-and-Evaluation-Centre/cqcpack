@@ -2,7 +2,7 @@
 if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, not for R CMD CHECK
 
 
-library(cqcrpack)
+library(cqcpack)
 #-------------------------------------------------------------------------------
 # UPDATING CHANGES
 #-------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ d$set("Version", new_version)
 d$write()
   
 # move old versions to archive
-old_versions <- list.files("../", pattern = "^cqcrpack_.+\\.tar\\.gz", full.names = TRUE)
+old_versions <- list.files("../", pattern = "^cqcpack_.+\\.tar\\.gz", full.names = TRUE)
 
 for(old_version in old_versions) {
   file.copy(old_version, sub("../", "../archive/", old_version, fixed = TRUE))
