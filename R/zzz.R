@@ -25,7 +25,7 @@
     if (isTRUE(getOption("cqc.warn_on_stale", TRUE))) {
       warning(msg, call. = FALSE)
     } else {
-      packageStartupMessage(paste0("⚠ ", msg,
+      packageStartupMessage(paste0("Error", msg,
         " You can adjust with options(cqc.data_stale_after_days = ...)."))
     }
   }
