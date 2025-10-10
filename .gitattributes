@@ -1,0 +1,8 @@
+*.json linguist-generated
+*.cc linguist-generated
+*.cpp linguist-generated
+*.rds linguist-generated
+*.html linguist-generated
+*.js linguist-generated
+*.css linguist-generated
+*.scss linguist-generated
