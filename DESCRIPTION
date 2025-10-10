@@ -12,7 +12,8 @@ Imports:
     dplyr,
     purrr,
     stringr,
-    tibble
+    tibble,
+    withr
 Suggests:
     testthat (>= 3.0.0),
     usethis,
