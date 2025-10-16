@@ -1,0 +1,69 @@
+name: CQC Incremental Update
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC (adjust as needed)
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  incremental-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout main package repo
+        uses: actions/checkout@v4
+      
+      - name: Setup R
+        uses: r-lib/setup-r@v2
+        with:
+          r-version: '4.3'
+      
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+      
+      - name: Install R dependencies
+        run: |
+          R -e 'install.packages(c("httr", "jsonlite", "devtools", "desc"))'
+      
+      - name: Install cqcpack from local source
+        run: |
+          R -e 'devtools::install(".", upgrade = "never")'
+      
+      - name: Checkout data repo
+        uses: actions/checkout@v4
+        with:
+          repository: Care-Policy-and-Evaluation-Centre/cqc-data-repo
+          token: ${{ secrets.CQC_DATA_REPO_TOKEN }}
+          path: cqc-data
+          ref: main
+      
+      - name: Create data directories
+        run: |
+          mkdir -p cqc-data/incremental
+      
+      - name: Run incremental update
+        env:
+          R_CQC_API_KEY: ${{ secrets.CQC_API_KEY }}
+          CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
+        run: |
+          R -f tests/helper-update.R
+      
+      - name: Commit and push data repo
+        working-directory: cqc-data
+        run: |
+          git config user.name "CQC Data Bot"
+          git config user.email "noreply@github.com"
+          git add -A
+          git commit -m "CQC incremental update: $(date -u +%Y-%m-%d)" || echo "No changes"
+          git push origin main
+      
+      - name: Commit and push package repo
+        run: |
+          git config user.name "CQC Data Bot"
+          git config user.email "noreply@github.com"
+          git add DESCRIPTION cqcpack_*.tar.gz
+          git commit -m "Package update with latest CQC data: $(date -u +%Y-%m-%d)" || echo "No changes"
+          git push origin main
