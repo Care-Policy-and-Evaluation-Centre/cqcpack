@@ -2,8 +2,8 @@ name: CQC Incremental Update
 
 on:
   schedule:
-    # Run daily at 2 AM UTC (adjust as needed)
-    - cron: '0 2 * * *'
+    # Run daily at 11 PM UTC
+    - cron: '0 23 * * *'
   workflow_dispatch:
 
 jobs:
@@ -26,13 +26,11 @@ jobs:
       
       - name: Install R dependencies
         run: |
-          mkdir -p /home/runner/work/_temp/R_libs
-          Rscript -e '.libPaths("/home/runner/work/_temp/R_libs"); install.packages(c("devtools", "httr", "jsonlite", "desc"), lib="/home/runner/work/_temp/R_libs", repos="https://cloud.r-project.org")'
-        shell: Rscript {0}
+          R -e 'install.packages(c("httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")'
       
-      - name: Install cqcpack from local source
+      - name: Install cqcpack
         run: |
-          R -e 'devtools::install(".", upgrade = "never")'
+          R -e 'install.packages("remotes", repos="https://cloud.r-project.org"); remotes::install_local(".")'
       
       - name: Checkout data repo
         uses: actions/checkout@v4
@@ -48,9 +46,8 @@ jobs:
       
       - name: Run incremental update
         env:
-          R_CQC_API_KEY: ${{ secrets.CQC_API_KEY }}
+          R_CQC_API_KEY: ${{ secrets.R_CQC_API_KEY }}
           CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
-          R_LIBS: /home/runner/work/_temp/R_libs
         run: |
           Rscript tests/helper-update.R
       
