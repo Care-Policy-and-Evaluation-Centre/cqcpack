@@ -28,7 +28,8 @@ jobs:
       
       - name: Install R dependencies
         run: |
-          install.packages(c("devtools", "httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")
+          mkdir -p /home/runner/work/_temp/R_libs
+          Rscript -e '.libPaths("/home/runner/work/_temp/R_libs"); install.packages(c("devtools", "httr", "jsonlite", "desc"), lib="/home/runner/work/_temp/R_libs", repos="https://cloud.r-project.org")'
         shell: Rscript {0}
       
       - name: Checkout data repo
@@ -55,6 +56,7 @@ jobs:
         env:
           R_CQC_API_KEY: ${{ secrets.CQC_API_KEY }}
           CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
+          R_LIBS: /home/runner/work/_temp/R_libs
         run: |
           Rscript tests/helper-first-build.R
       
