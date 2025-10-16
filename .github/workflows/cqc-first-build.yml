@@ -32,7 +32,7 @@ jobs:
 
       - name: Install cqcpack
         run: |
-          R -e 'install.packages("devtools", repos="https://cloud.r-project.org"); devtools::install_local(".")'
+          R -e 'install.packages("remotes", repos="https://cloud.r-project.org"); remotes::install_local(".")'
       
       - name: Checkout data repo
         uses: actions/checkout@v4
