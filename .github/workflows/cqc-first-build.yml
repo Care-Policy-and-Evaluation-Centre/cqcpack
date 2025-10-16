@@ -24,13 +24,20 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+          sudo apt-get install -y \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libfreetype6-dev \
+            libpng-dev \
+            libtiff-dev \
+            libjpeg-dev \
+            libfribidi-dev \
+            libharfbuzz-dev \
+            pandoc
       
-      - name: Install package and dependencies
+      - name: Install package dependencies
         run: |
-          Rscript -e 'install.packages(c("devtools", "httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")'
-          R -e 'devtools::install_deps(dependencies=TRUE)'
-          R -e 'devtools::install_local()'
+          R -e 'install.packages(c("httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")'
       
       - name: Checkout data repo
         uses: actions/checkout@v4
@@ -58,6 +65,10 @@ jobs:
           CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
         run: |
           Rscript tests/helper-first-build.R
+
+      - name: Build package
+        run: |
+          R -e 'install.packages("devtools"); devtools::build()'
       
       - name: Commit and push data repo
         working-directory: cqc-data
