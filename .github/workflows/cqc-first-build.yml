@@ -24,24 +24,11 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            libcurl4-openssl-dev \
-            libssl-dev \
-            libfreetype6-dev \
-            libpng-dev \
-            libtiff-dev \
-            libjpeg-dev \
-            libfribidi-dev \
-            libharfbuzz-dev \
-            pandoc
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev
       
       - name: Install R dependencies
         run: |
-          R -e 'install.packages(c("devtools", "httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")'
-      
-      - name: Install cqcpack package
-        run: |
-          R -e 'devtools::install_local(".", dependencies=TRUE)'
+          R -e 'install.packages(c("httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")'
       
       - name: Checkout data repo
         uses: actions/checkout@v4
@@ -51,17 +38,9 @@ jobs:
           path: cqc-data
           ref: main
       
-      - name: Reset data repo (if requested)
-        if: github.event.inputs.reset_build == 'true'
-        working-directory: cqc-data
-        run: |
-          rm -rf initial_bulk cqc_initial_bulk_*.tar.gz incremental cqc_incremental_*.tar.gz
-          echo "Data repo reset"
-      
       - name: Create data directories
         run: |
           mkdir -p cqc-data/initial_bulk
-          mkdir -p cqc-data/incremental
       
       - name: Run first-build sync
         env:
@@ -70,10 +49,6 @@ jobs:
         run: |
           Rscript tests/helper-first-build.R
       
-      - name: Build package
-        run: |
-          R -e 'devtools::build()'
-      
       - name: Commit and push data repo
         working-directory: cqc-data
         run: |
@@ -81,12 +56,4 @@ jobs:
           git config user.email "noreply@github.com"
           git add -A
           git commit -m "CQC initial bulk download: $(date -u +%Y-%m-%d)" || echo "No changes"
-          git push origin main
-      
-      - name: Commit and push package repo
-        run: |
-          git config user.name "CQC Data Bot"
-          git config user.email "noreply@github.com"
-          git add DESCRIPTION cqcpack_*.tar.gz
-          git commit -m "Initial package build: $(date -u +%Y-%m-%d)" || echo "No changes"
           git push origin main
