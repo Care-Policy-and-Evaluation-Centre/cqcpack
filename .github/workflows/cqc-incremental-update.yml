@@ -26,7 +26,7 @@ jobs:
       
       - name: Install R dependencies
         run: |
-          install.packages(c("devtools", "httr", "jsonlite", "desc"))
+          install.packages(c("devtools", "httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")
         shell: Rscript {0}
       
       - name: Install cqcpack from local source
