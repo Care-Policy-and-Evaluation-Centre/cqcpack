@@ -22,6 +22,12 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   
   .libPaths(c(Sys.getenv("R_LIBS"), .libPaths()))
   
+  # Ensure required packages are loaded
+  library(devtools)
+  library(httr)
+  library(jsonlite)
+  library(desc)
+  
   #-------------------------------------------------------------------------------
   # SETUP: Check environment and paths
   #-------------------------------------------------------------------------------
