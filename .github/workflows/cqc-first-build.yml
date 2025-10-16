@@ -56,7 +56,7 @@ jobs:
           R_CQC_API_KEY: ${{ secrets.CQC_API_KEY }}
           CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
         run: |
-          R -f tests/helper-first-build.R
+          Rscript tests/helper-first-build.R
       
       - name: Commit and push data repo
         working-directory: cqc-data
