@@ -19,70 +19,159 @@
 # library(cqcpack)
 
 if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, not for R CMD CHECK
+  #-------------------------------------------------------------------------------
+  # SETUP: Check environment and paths
+  #-------------------------------------------------------------------------------
+  data_repo_path <- Sys.getenv("CQC_DATA_REPO_PATH", NA_character_)
+  is_github_actions <- Sys.getenv("GITHUB_ACTIONS") == "true"
+  
+  cat("=== CQC First-Run Build (Full Initial Sync) ===\n")
+  cat("GitHub Actions:", is_github_actions, "\n")
+  cat("Data repo path:", data_repo_path, "\n\n")
+  
+  #-------------------------------------------------------------------------------
+  # BUILD AND INSTALL PACKAGE
+  #-------------------------------------------------------------------------------
+  cat("1. Building and installing cqcpack...\n")
   devtools::load_all()
   devtools::check()
   devtools::build()
   devtools::install()
   library(cqcpack)
 
-#-------------------------------------------------------------------------------
-# CACHING AND BUILDING DF
-#-------------------------------------------------------------------------------
-# LOCATION DF
-# 1. Caching location IDs to project file
-location_ids <- cache_location_ids()
+  #-------------------------------------------------------------------------------
+  # CACHING AND BUILDING DF
+  #-------------------------------------------------------------------------------
+  # LOCATION DF
+  cat("2. Caching location data...\n")
+  cat("   - Getting location IDs\n")
+  location_ids <- cache_location_ids()
+  
+  cat("   - Downloading location JSONs\n")
+  location_jsons <- cache_location_jsons()
+  
+  cat("   - Building location dataframe\n")
+  location_df <- build_location_df(update_mode = FALSE)
+  cat("     Total locations:", nrow(location_df), "\n")
 
-# 2. Caching location JSONs to project file
-location_jsons <- cache_location_jsons()
+  #-------------------------------------------------------------------------------
+  # CACHING AND BUILDING DF
+  #-------------------------------------------------------------------------------
+  # PROVIDER DF
+  # 1. Caching provider IDs to project file
+  cat("3. Caching provider data...\n")
+  cat("   - Getting provider IDs\n")
+  provider_ids <- cache_provider_ids()
+  
+  cat("   - Downloading provider JSONs\n")
+  provider_jsons <- cache_provider_jsons()
+  
+  cat("   - Building provider dataframe\n")
+  provider_df <- build_provider_df()
+  cat("     Total providers:", nrow(provider_df), "\n")
+  
+  #-------------------------------------------------------------------------------
+  # MERGING DF (its working now , 11.08.2025)
+  #-------------------------------------------------------------------------------
+  cat("4. Merging provider and location data...\n")
+  merged_data <- merge_provider_location()
+  cat("   Merged dataset rows:", nrow(merged_data), "\n")
 
-# 3. Building location_df from most recent scrape
-location_df <- build_location_df(update_mode = FALSE)
-View(location_df)
-
-#-------------------------------------------------------------------------------
-# CACHING AND BUILDING DF
-#-------------------------------------------------------------------------------
-# PROVIDER DF
-# 1. Caching provider IDs to project file
-provider_ids <- cache_provider_ids()
-
-# 2. Caching provider JSONs to project file
-provider_jsons <- cache_provider_jsons()
-
-# 3. Building provider_df from most recent scrape
-provider_df <- build_provider_df()
-View(provider_df)
-
-#-------------------------------------------------------------------------------
-# UPDATING CHANGES
-#-------------------------------------------------------------------------------
-# 1. Getting incremental location changes
-changes <- get_incremental_changes()
-
-# LOCATION DF
-# 2.1 Update location df with changes between last scrape and today
-update_location_dataset()
-
-# PROVIDER DF
-# 2.2 Update Location df with changes between last scrape and today
-update_provider_dataset()
-#-------------------------------------------------------------------------------
-# MERGING DF (its working now , 11.08.2025)
-#-------------------------------------------------------------------------------
-merged_data <- merge_provider_location()
-View(merged_data)
-
-#-------------------------------------------------------------------------------
-# GETTING ID SPECIFIC INFORMATION (last tested on 16.04.2025), (updated on 28.07.2025)
-#-------------------------------------------------------------------------------
-# Getting provider id information
-provider_results <- get_cqc_id_info(c("1-101604132"), id_type = "provider")
-provider_results
-
-# Getting location id information
-location_results <- get_cqc_id_info(c("1-227235701"), id_type = "location")
-location_results
-
-devtools::build()
+  #-------------------------------------------------------------------------------
+  # COPY JSONs TO DATA REPO
+  #-------------------------------------------------------------------------------
+  if (is_github_actions && !is.na(data_repo_path)) {
+    cat("5. Copying JSON files to data repository...\n")
+    
+    # Get the cache directory
+    base_cache_dir <- tools::R_user_dir("cqc", "cache")
+    today_date <- format(Sys.Date(), "%Y-%m-%d")
+    
+    # Handle location data
+    loc_pattern <- paste0("location_information_", Sys.Date())
+    loc_dirs <- list.dirs(base_cache_dir, full.names = TRUE, recursive = FALSE)
+    loc_dirs <- loc_dirs[grepl(loc_pattern, basename(loc_dirs))]
+    
+    if (length(loc_dirs) > 0) {
+      loc_json_dirs <- list.dirs(loc_dirs[1], full.names = TRUE, recursive = FALSE)
+      loc_json_dirs <- loc_json_dirs[grepl("location_jsons_", basename(loc_json_dirs))]
+      
+      if (length(loc_json_dirs) > 0) {
+        cat("   - Copying location JSONs...\n")
+        loc_data_dir <- file.path(data_repo_path, "initial_bulk", "location")
+        dir.create(loc_data_dir, recursive = TRUE, showWarnings = FALSE)
+        
+        loc_json_files <- list.files(loc_json_dirs[1], pattern = "*.json", full.names = TRUE)
+        file.copy(loc_json_files, loc_data_dir, overwrite = TRUE)
+        cat("     Copied", length(loc_json_files), "location JSON files\n")
+      }
+    }
+    
+    # Handle provider data
+    prov_pattern <- paste0("provider_information_", Sys.Date())
+    prov_dirs <- list.dirs(base_cache_dir, full.names = TRUE, recursive = FALSE)
+    prov_dirs <- prov_dirs[grepl(prov_pattern, basename(prov_dirs))]
+    
+    if (length(prov_dirs) > 0) {
+      prov_json_dirs <- list.dirs(prov_dirs[1], full.names = TRUE, recursive = FALSE)
+      prov_json_dirs <- prov_json_dirs[grepl("provider_jsons_", basename(prov_json_dirs))]
+      
+      if (length(prov_json_dirs) > 0) {
+        cat("   - Copying provider JSONs...\n")
+        prov_data_dir <- file.path(data_repo_path, "initial_bulk", "provider")
+        dir.create(prov_data_dir, recursive = TRUE, showWarnings = FALSE)
+        
+        prov_json_files <- list.files(prov_json_dirs[1], pattern = "*.json", full.names = TRUE)
+        file.copy(prov_json_files, prov_data_dir, overwrite = TRUE)
+        cat("     Copied", length(prov_json_files), "provider JSON files\n")
+      }
+    }
+    
+    # Create tarball of initial bulk download
+    cat("   - Creating initial bulk tarball...\n")
+    bulk_dir <- file.path(data_repo_path, "initial_bulk")
+    if (dir.exists(bulk_dir)) {
+      tarball_name <- paste0("cqc_initial_bulk_", today_date, ".tar.gz")
+      
+      system(paste0(
+        "cd ", data_repo_path, " && ",
+        "tar -czf ", tarball_name, " initial_bulk/"
+      ))
+      
+      cat("     Created", tarball_name, "\n")
+      
+      # Clean up raw JSON files
+      unlink(bulk_dir, recursive = TRUE)
+      cat("     Cleaned up raw JSON files\n")
+    }
+    
+  } else {
+    cat("5. Skipping JSON copy (not in GitHub Actions or no data repo path)\n")
+  }
+  
+  #-------------------------------------------------------------------------------
+  # UPDATE PACKAGE METADATA
+  #-------------------------------------------------------------------------------
+  cat("6. Updating package metadata...\n")
+  
+  if (!requireNamespace("desc", quietly = TRUE)) {
+    stop("Please install the 'desc' package to write build metadata")
+  }
+  
+  d <- desc::desc(file = "DESCRIPTION")
+  d$set("DataBuilt", format(Sys.Date()))
+  d$set("Version", "0.1.0")
+  d$write()
+  
+  cat("   - Version set to: 0.1.0\n")
+  cat("   - DataBuilt set to:", format(Sys.Date()), "\n")
+  
+  #-------------------------------------------------------------------------------
+  # BUILD PACKAGE
+  #-------------------------------------------------------------------------------
+  cat("7. Building package tar.gz...\n")
+  devtools::build()
+  
+  cat("\n=== First-run build complete ===\n")
 
 }
