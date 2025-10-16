@@ -27,9 +27,9 @@ jobs:
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev
       
       - name: Install R dependencies
-        run: |
-          install.packages(c("devtools", "httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")
-        shell: Rscript {0}
+        uses: r-lib/setup-r-dependencies@v2
+        with:
+          packages: devtools|httr|jsonlite|desc
       
       - name: Checkout data repo
         uses: actions/checkout@v4
