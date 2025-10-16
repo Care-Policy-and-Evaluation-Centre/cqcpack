@@ -23,7 +23,6 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   .libPaths(c(Sys.getenv("R_LIBS"), .libPaths()))
   
   # Ensure required packages are loaded
-  library(devtools)
   library(httr)
   library(jsonlite)
   library(desc)
@@ -41,11 +40,7 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   #-------------------------------------------------------------------------------
   # BUILD AND INSTALL PACKAGE
   #-------------------------------------------------------------------------------
-  cat("1. Building and installing cqcpack...\n")
-  devtools::load_all()
-  devtools::check()
-  devtools::build()
-  devtools::install()
+  cat("1. Loading cqcpack...\n")
   library(cqcpack)
 
   #-------------------------------------------------------------------------------
@@ -174,12 +169,6 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   
   cat("   - Version set to: 0.1.0\n")
   cat("   - DataBuilt set to:", format(Sys.Date()), "\n")
-  
-  #-------------------------------------------------------------------------------
-  # BUILD PACKAGE
-  #-------------------------------------------------------------------------------
-  cat("7. Building package tar.gz...\n")
-  devtools::build()
   
   cat("\n=== First-run build complete ===\n")
 
