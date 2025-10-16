@@ -1,6 +1,7 @@
 
 if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, not for R CMD CHECK
-
+  
+  .libPaths(c(Sys.getenv("R_LIBS"), .libPaths()))
 
   library(cqcpack)
   
