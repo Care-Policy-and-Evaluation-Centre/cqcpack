@@ -48,7 +48,7 @@ jobs:
       
       - name: Run first-build sync
         env:
-          R_CQC_API_KEY: ${{ secrets.CQC_API_KEY }}
+          R_CQC_API_KEY: ${{ secrets.R_CQC_API_KEY }}
           CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
         run: |
           Rscript tests/helper-first-build.R
