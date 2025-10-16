@@ -29,6 +29,10 @@ jobs:
       - name: Install R dependencies
         run: |
           R -e 'install.packages(c("httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")'
+
+      - name: Install cqcpack
+        run: |
+          R -e 'install.packages("devtools", repos="https://cloud.r-project.org"); devtools::install_local(".")'
       
       - name: Checkout data repo
         uses: actions/checkout@v4
