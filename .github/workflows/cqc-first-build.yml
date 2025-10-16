@@ -35,10 +35,10 @@ jobs:
             libharfbuzz-dev \
             pandoc
       
-      - name: Install package dependencies
+      - name: Install R dependencies
         run: |
           R -e 'install.packages(c("devtools", "httr", "jsonlite", "desc"), repos="https://cloud.r-project.org")'
-
+      
       - name: Install cqcpack package
         run: |
           R -e 'devtools::install_local(".", dependencies=TRUE)'
@@ -69,10 +69,10 @@ jobs:
           CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
         run: |
           Rscript tests/helper-first-build.R
-
+      
       - name: Build package
         run: |
-          R -e 'install.packages("devtools"); devtools::build()'
+          R -e 'devtools::build()'
       
       - name: Commit and push data repo
         working-directory: cqc-data
@@ -90,4 +90,3 @@ jobs:
           git add DESCRIPTION cqcpack_*.tar.gz
           git commit -m "Initial package build: $(date -u +%Y-%m-%d)" || echo "No changes"
           git push origin main
-          
