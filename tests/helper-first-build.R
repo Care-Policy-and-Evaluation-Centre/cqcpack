@@ -11,7 +11,7 @@
 # Reload package
 # library(devtools)
 # pkg_path <- "C:/Users/DASR6/Desktop/cqc.rpack"
-# devtools::load_all(pkg_path)
+# devtools::load_all(pkg_path)0 
 # devtools::check(pkg_path)
 # devtools::build(pkg_path)
 # devtools::install(pkg_path)
@@ -162,7 +162,20 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
     stop("Please install the 'desc' package to write build metadata")
   }
   
-  d <- desc::desc(file = "DESCRIPTION")
+  # Ensure we're working from package root
+  pkg_root <- if (basename(getwd()) == "tests") {
+    normalizePath("..")
+  } else {
+    getwd()
+  }
+  
+  desc_file <- file.path(pkg_root, "DESCRIPTION")
+  
+  if (!file.exists(desc_file)) {
+    stop("DESCRIPTION file not found at: ", desc_file)
+  }
+  
+  d <- desc::desc(file = desc_file)
   d$set("DataBuilt", format(Sys.Date()))
   d$set("Version", "0.1.0")
   d$write()
