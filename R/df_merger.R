@@ -5,16 +5,32 @@
 #' @export
 merge_provider_location <- function(join_fn = dplyr::inner_join) {
   
-  # This is exactly what View() does - use standard R name resolution
-  if (!exists("location_df")) {
-    stop("location_df not found in search path")
-  }
-  if (!exists("provider_df")) {
-    stop("provider_df not found in search path")
+  # Determine package root and data directory
+  pkg_root <- find_package_root()
+  data_dir <- file.path(pkg_root, "data")
+  
+  # Create data directory if it doesn't exist
+  if (!dir.exists(data_dir)) {
+    dir.create(data_dir, recursive = TRUE)
   }
   
-  provider_df = provider_df
-  location_df = location_df
+  # Load the data files
+  location_rda_path <- file.path(data_dir, "location_df.rda")
+  provider_rda_path <- file.path(data_dir, "provider_df.rda")
+  
+  if (!file.exists(location_rda_path)) {
+    stop("location_df.rda not found at: ", location_rda_path,
+         "\nPlease run build_location_df() first.")
+  }
+  
+  if (!file.exists(provider_rda_path)) {
+    stop("provider_df.rda not found at: ", provider_rda_path,
+         "\nPlease run build_provider_df() first.")
+  }
+  
+  # Load the datasets
+  load(location_rda_path)
+  load(provider_rda_path)
   
   # Validate required columns
   if (!"providerId" %in% names(provider_df) || !"providerId" %in% names(location_df)) {
@@ -35,15 +51,12 @@ merge_provider_location <- function(join_fn = dplyr::inner_join) {
   message("Merged data: ", nrow(merged_df), " records")
   
   # Save merged data
-  data_folder <- "data"
-  if (!dir.exists(data_folder)) {
-    dir.create(data_folder, recursive = TRUE)
-  }
-  
-  save_path <- file.path(data_folder, "merged_df.rda")
+  save_path <- file.path(data_dir, "merged_df.rda")
   save(merged_df, file = save_path, compress = "bzip2")
-  cat("Merged data saved to:", save_path, "\n")
+  message("Merged data saved to: ", save_path)
   
-  # Return invisibly (moved to the end)
+  # Return invisibly
   invisible(merged_df)
 }
+
+#-------------------------------------------------------------------------------
