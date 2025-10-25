@@ -58,3 +58,32 @@ set_headers <- function(api_key = NULL) {
 }
 
 #-------------------------------------------------------------------------------
+
+#' Find Package Root Directory
+#'
+#' Searches upward from current directory to find package root
+#' (directory containing DESCRIPTION file)
+#'
+#' @return Character path to package root
+#' @keywords internal
+#' @export
+find_package_root <- function() {
+  # Start from current working directory
+  current_dir <- getwd()
+  
+  # Keep going up until we find DESCRIPTION or hit root
+  while (!file.exists(file.path(current_dir, "DESCRIPTION"))) {
+    parent_dir <- dirname(current_dir)
+    
+    # If we've reached the root without finding DESCRIPTION
+    if (parent_dir == current_dir) {
+      stop("Could not find package root (no DESCRIPTION file found)")
+    }
+    
+    current_dir <- parent_dir
+  }
+  
+  return(normalizePath(current_dir))
+}
+
+#-------------------------------------------------------------------------------
