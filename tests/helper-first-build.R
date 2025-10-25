@@ -7,7 +7,6 @@
 #               "jsonlite", "httr", "purrr", "stringr", "tibble", "dplyr")
 # install.packages(packages, lib = custom_lib)
 
-
 # Reload package
 # library(devtools)
 # pkg_path <- "C:/Users/DASR6/Desktop/cqc.rpack"
@@ -71,7 +70,7 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   provider_jsons <- cache_provider_jsons()
   
   cat("   - Building provider dataframe\n")
-  provider_df <- build_provider_df()
+  provider_df <- build_provider_df(update_mode = FALSE)
   cat("     Total providers:", nrow(provider_df), "\n")
   
   #-------------------------------------------------------------------------------
