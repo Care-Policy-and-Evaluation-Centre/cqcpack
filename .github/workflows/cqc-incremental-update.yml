@@ -6,6 +6,10 @@ on:
     - cron: '0 23 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   incremental-update:
     runs-on: ubuntu-latest
