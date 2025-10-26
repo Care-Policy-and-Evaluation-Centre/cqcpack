@@ -1,19 +1,21 @@
-
-if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, not for R CMD CHECK
+if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") {
   
   .libPaths(c(Sys.getenv("R_LIBS"), .libPaths()))
-
+  
   library(cqcpack)
+  library(desc)
   
   #-------------------------------------------------------------------------------
   # SETUP: Check environment and paths
   #-------------------------------------------------------------------------------
   data_repo_path <- Sys.getenv("CQC_DATA_REPO_PATH", NA_character_)
   is_github_actions <- Sys.getenv("GITHUB_ACTIONS") == "true"
+  today_date <- format(Sys.Date(), "%Y-%m-%d")
   
   cat("=== CQC Incremental Update ===\n")
   cat("GitHub Actions:", is_github_actions, "\n")
-  cat("Data repo path:", data_repo_path, "\n\n")
+  cat("Data repo path:", data_repo_path, "\n")
+  cat("Date:", today_date, "\n\n")
   
   #-------------------------------------------------------------------------------
   # GETTING INCREMENTAL CHANGES
@@ -21,6 +23,22 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   cat("1. Getting incremental changes...\n")
   changes <- get_incremental_changes()
   
+  # Check if there are any changes
+  if (is.null(changes) || (length(changes$location_changes) == 0 && length(changes$provider_changes) == 0)) {
+    cat("   No changes detected. Exiting.\n")
+    if (is_github_actions) {
+      quit(save = "no", status = 0)
+    } else {
+      stop("No changes to process")
+    }
+  }
+  
+  cat("   Location changes:", length(changes$location_changes), "\n")
+  cat("   Provider changes:", length(changes$provider_changes), "\n\n")
+  
+  #-------------------------------------------------------------------------------
+  # UPDATE DATASETS
+  #-------------------------------------------------------------------------------
   cat("2. Updating location dataset...\n")
   update_location_dataset()
   
@@ -32,7 +50,7 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   #-------------------------------------------------------------------------------
   cat("4. Merging provider and location data...\n")
   merged_data <- merge_provider_location()
-  
+  cat("   Merged dataset rows:", nrow(merged_data), "\n\n")
   
   #-------------------------------------------------------------------------------
   # COPY CHANGED JSONs TO DATA REPO (if running in GitHub Actions)
@@ -42,7 +60,6 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
     
     # Get the cache directory
     base_cache_dir <- tools::R_user_dir("cqc", "cache")
-    today_date <- format(Sys.Date(), "%Y-%m-%d")
     
     # Handle location changes
     loc_change_pattern <- paste0("changed_location_information_", Sys.Date())
@@ -96,15 +113,17 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
         tarball_name <- paste0("cqc_incremental_", today_date, ".tar.gz")
         
         system(paste0(
-          "cd ", file.path(data_repo_path, "incremental"), " && ",
+          "cd ", shQuote(file.path(data_repo_path, "incremental")), " && ",
           "tar -czf ../", tarball_name, " ", today_date, "/"
         ))
         
-        cat("     Created", tarball_name, "\n")
-        
-        # Clean up the incremental folder after tarball created
-        unlink(incremental_dir, recursive = TRUE)
-        cat("     Cleaned up raw JSON files\n")
+        if (file.exists(file.path(data_repo_path, tarball_name))) {
+          cat("     Created", tarball_name, "\n")
+          
+          # Clean up the incremental folder after tarball created
+          unlink(incremental_dir, recursive = TRUE)
+          cat("     Cleaned up raw JSON files\n")
+        }
       }
     } else {
       cat("   - No changes found, skipping tarball creation\n")
@@ -117,65 +136,37 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   #-------------------------------------------------------------------------------
   # UPDATE PACKAGE METADATA
   #-------------------------------------------------------------------------------
-  cat("6. Updating package metadata...\n")
+  cat("\n6. Updating package metadata...\n")
   
   if (!requireNamespace("desc", quietly = TRUE)) {
     stop("Please install the 'desc' package to write build metadata")
   }
   
-  d <- desc::desc(file = "DESCRIPTION")
+  # Use find_package_root() for consistency
+  pkg_root <- find_package_root()
+  desc_file <- file.path(pkg_root, "DESCRIPTION")
+  
+  if (!file.exists(desc_file)) {
+    stop("DESCRIPTION file not found at: ", desc_file)
+  }
+  
+  d <- desc::desc(file = desc_file)
   
   # Update date built
   d$set("DataBuilt", format(Sys.Date()))
   
   # Update version (increment patch number)
-  version <- d$get("Version") |>
-    strsplit(".", fixed = TRUE) |>
-    unname() |>
-    unlist() |>
-    as.integer()
-  minor_num_idx <- length(version)
-  version[minor_num_idx] <- version[minor_num_idx] + 1
-  new_version <- version |>
-    as.character() |>
-    paste0(collapse = ".")
+  current_version <- d$get_version()
+  version_parts <- as.numeric(strsplit(as.character(current_version), "\\.")[[1]])
+  version_parts[3] <- version_parts[3] + 1
+  new_version <- paste(version_parts, collapse = ".")
+  
   d$set("Version", new_version)
   d$write()
   
   cat("   - Version updated to:", new_version, "\n")
   cat("   - DataBuilt set to:", format(Sys.Date()), "\n")
   
-  #-------------------------------------------------------------------------------
-  # ARCHIVE OLD PACKAGE VERSIONS
-  #-------------------------------------------------------------------------------
-  cat("7. Archiving old package versions...\n")
-  
-  old_versions <- list.files("../", pattern = "^cqcpack_.+\\.tar\\.gz$", full.names = TRUE)
-  
-  if (length(old_versions) > 0) {
-    for (old_version in old_versions) {
-      archive_dir <- "../archive"
-      if (!dir.exists(archive_dir)) dir.create(archive_dir, recursive = TRUE)
-      
-      file.copy(
-        old_version,
-        file.path(archive_dir, basename(old_version)),
-        overwrite = TRUE
-      )
-      unlink(old_version)
-      cat("   - Archived:", basename(old_version), "\n")
-    }
-  } else {
-    cat("   - No old versions to archive\n")
-  }
-  
-  #-------------------------------------------------------------------------------
-  # BUILD PACKAGE
-  #-------------------------------------------------------------------------------
-  cat("8. Building package tar.gz...\n")
-  devtools::build()
-  
   cat("\n=== Incremental update complete ===\n")
   
 }
-
