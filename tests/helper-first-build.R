@@ -41,7 +41,7 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   #-------------------------------------------------------------------------------
   cat("1. Loading cqcpack...\n")
   library(cqcpack)
-
+  
   #-------------------------------------------------------------------------------
   # CACHING AND BUILDING DF
   #-------------------------------------------------------------------------------
@@ -56,12 +56,11 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   cat("   - Building location dataframe\n")
   location_df <- build_location_df(update_mode = FALSE)
   cat("     Total locations:", nrow(location_df), "\n")
-
+  
   #-------------------------------------------------------------------------------
   # CACHING AND BUILDING DF
   #-------------------------------------------------------------------------------
   # PROVIDER DF
-  # 1. Caching provider IDs to project file
   cat("3. Caching provider data...\n")
   cat("   - Getting provider IDs\n")
   provider_ids <- cache_provider_ids()
@@ -74,17 +73,54 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   cat("     Total providers:", nrow(provider_df), "\n")
   
   #-------------------------------------------------------------------------------
-  # MERGING DF (its working now , 11.08.2025)
+  # MERGING DF
   #-------------------------------------------------------------------------------
   cat("4. Merging provider and location data...\n")
   merged_data <- merge_provider_location()
   cat("   Merged dataset rows:", nrow(merged_data), "\n")
-
+  
+  #-------------------------------------------------------------------------------
+  # VERIFY FILE LOCATIONS
+  #-------------------------------------------------------------------------------
+  cat("\n5. Verifying data file locations...\n")
+  pkg_root <- find_package_root()
+  data_dir <- file.path(pkg_root, "data")
+  
+  cat("   Package root:", pkg_root, "\n")
+  cat("   Data directory:", data_dir, "\n\n")
+  
+  # Check correct location
+  expected_files <- c("location_df.rda", "provider_df.rda", "merged_df.rda")
+  all_correct <- TRUE
+  
+  for (file in expected_files) {
+    file_path <- file.path(data_dir, file)
+    exists <- file.exists(file_path)
+    cat("   ", ifelse(exists, "✓", "✗"), file, 
+        ifelse(exists, "saved correctly", "NOT FOUND"), "\n")
+    if (!exists) all_correct <- FALSE
+  }
+  
+  # Check wrong location doesn't exist
+  wrong_data_dir <- file.path(pkg_root, "tests", "data")
+  if (dir.exists(wrong_data_dir)) {
+    cat("\n   ⚠ WARNING: tests/data/ folder exists (wrong location)\n")
+    all_correct <- FALSE
+  } else {
+    cat("\n   ✓ No tests/data/ folder (correct!)\n")
+  }
+  
+  if (all_correct) {
+    cat("\n✅ All data files saved to correct location!\n\n")
+  } else {
+    cat("\n❌ Some files not in correct location - check above\n\n")
+  }
+  
   #-------------------------------------------------------------------------------
   # COPY JSONs TO DATA REPO
   #-------------------------------------------------------------------------------
   if (is_github_actions && !is.na(data_repo_path)) {
-    cat("5. Copying JSON files to data repository...\n")
+    cat("6. Copying JSON files to data repository...\n")
     
     # Get the cache directory
     base_cache_dir <- tools::R_user_dir("cqc", "cache")
@@ -149,25 +185,20 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
     }
     
   } else {
-    cat("5. Skipping JSON copy (not in GitHub Actions or no data repo path)\n")
+    cat("6. Skipping JSON copy (not in GitHub Actions or no data repo path)\n")
   }
   
   #-------------------------------------------------------------------------------
   # UPDATE PACKAGE METADATA
   #-------------------------------------------------------------------------------
-  cat("6. Updating package metadata...\n")
+  cat("\n7. Updating package metadata...\n")
   
   if (!requireNamespace("desc", quietly = TRUE)) {
     stop("Please install the 'desc' package to write build metadata")
   }
   
-  # Ensure we're working from package root
-  pkg_root <- if (basename(getwd()) == "tests") {
-    normalizePath("..")
-  } else {
-    getwd()
-  }
-  
+  # Use find_package_root() for consistency
+  pkg_root <- find_package_root()
   desc_file <- file.path(pkg_root, "DESCRIPTION")
   
   if (!file.exists(desc_file)) {
@@ -183,5 +214,5 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") { # Dev-only file, n
   cat("   - DataBuilt set to:", format(Sys.Date()), "\n")
   
   cat("\n=== First-run build complete ===\n")
-
+  
 }
