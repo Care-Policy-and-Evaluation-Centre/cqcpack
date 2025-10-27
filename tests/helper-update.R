@@ -142,9 +142,15 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") {
     stop("Please install the 'desc' package to write build metadata")
   }
   
-  # Use find_package_root() for consistency
-  pkg_root <- find_package_root()
-  desc_file <- file.path(pkg_root, "DESCRIPTION")
+  # Determine package root based on environment
+  if (is_github_actions) {
+    # In GitHub Actions, we're already in the package root
+    desc_file <- "DESCRIPTION"
+  } else {
+    # For local testing, use find_package_root()
+    pkg_root <- find_package_root()
+    desc_file <- file.path(pkg_root, "DESCRIPTION")
+  }
   
   if (!file.exists(desc_file)) {
     stop("DESCRIPTION file not found at: ", desc_file)
@@ -166,7 +172,5 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") {
   
   cat("   - Version updated to:", new_version, "\n")
   cat("   - DataBuilt set to:", format(Sys.Date()), "\n")
-  
-  cat("\n=== Incremental update complete ===\n")
   
 }
