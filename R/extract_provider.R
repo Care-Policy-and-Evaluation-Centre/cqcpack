@@ -3,7 +3,7 @@
 #' Extracts structured data from a CQC provider JSON file and returns it as a
 #' single-row tibble. The function handles various nested structures including
 #' contacts, regulated activities, inspection categories, ratings, and reports.
-#' Provides options to extract nested data as list columns for detailed analysis.
+#' Provides options to extract nested data as list columns.
 #'
 #' @param file Character. Path to the provider JSON file to process
 #' @param json_dir Character. Optional directory path for JSON files (currently unused)
@@ -762,7 +762,7 @@ extract_provider_row <- function(file,
     # Read JSON
     x <- jsonlite::fromJSON(file, simplifyVector = TRUE)
 
-    # NEW: Check if contacts data exists (for flag)
+    # Check if contacts data exists (for flag)
     has_contacts <- contacts_data_exists(x$contacts)
 
     # Extract conditional nested columns
@@ -844,10 +844,10 @@ extract_provider_row <- function(file,
       lastInspection_date = extract_most_recent_date(x$lastInspection, "date"),
       lastReport_publicationDate = extract_most_recent_date(x$lastReport, "publicationDate"),
 
-      # NEW: ADD CONTACTS FLAG COLUMN (conditional)
+      # ADD CONTACTS FLAG COLUMN (conditional)
       !!!contacts_flag_column,
 
-      # ADD CONTACTS NESTED COLUMN (conditional) -- now with improved extraction
+      # ADD CONTACTS NESTED COLUMN (conditional)
       !!!contacts_nested_column,
 
       # ADD REGULATED ACTIVITIES COLUMN (conditional)
@@ -861,7 +861,7 @@ extract_provider_row <- function(file,
       currentRatings_overall_reportDate = safe_extract(x, "currentRatings", "overall", "reportDate"),
       currentRatings_overall_reportLinkId = safe_extract(x, "currentRatings", "overall", "reportLinkId"),
 
-      # Current ratings - provider-level currentRatings (NEW SECTION)
+      # Current ratings - provider-level currentRatings
       currentRatings_reportDate = safe_extract(x, "currentRatings", "reportDate"),
       current_serviceRatings_name = extract_first_service_rating_field(x$currentRatings$serviceRatings, "name"),
       current_serviceRatings_rating = extract_first_service_rating_field(x$currentRatings$serviceRatings, "rating"),

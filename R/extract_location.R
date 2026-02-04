@@ -1,7 +1,7 @@
 #' Extract Location Row from JSON File
 #'
-#' Processes a single CQC location JSON file and converts it into a one-row tibble
-#' with standardized data structure for analysis and merging.
+#' Extracts structured data from a CQC location JSON file and returns it as a
+#' single-row tibble. 
 #'
 #' @param file Path to a single CQC location JSON file.
 #' @param json_dir Path to directory containing JSON files (optional, not used).
@@ -963,8 +963,6 @@ extract_location_row <- function(file, json_dir = NULL, all_specialisms = NULL, 
 
       # ADD UNPUBLISHED REPORTS NESTED COLUMN (conditional)
       !!!unpublished_reports_nested_column
-
-      # REMOVED: Provider inspection areas (as requested)
     )
 
   }, error = function(e) {

@@ -309,4 +309,5 @@ get_incremental_changes <- function(
 
   return(incremental_changes)
 }
+
 #-------------------------------------------------------------------------------

@@ -35,8 +35,8 @@ get_api_key <- function() {
 #'                key. If not provided, it will be retrieved using `get_api_key()`.
 #' @return httr headers object that can be used in HTTP requests
 #' @export
-
 set_headers <- function(api_key = NULL) {
+
   # If no API key is provided, call get_api_key() to retrieve it
   if (is.null(api_key)) {
     api_key <- get_api_key()
@@ -68,6 +68,7 @@ set_headers <- function(api_key = NULL) {
 #' @keywords internal
 #' @export
 find_package_root <- function() {
+  
   # Start from current working directory
   current_dir <- getwd()
   

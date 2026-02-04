@@ -9,7 +9,6 @@
 #' @param per_page Number of records per page (default is 100).
 #' @return A data frame containing combined data from all pages.
 #' @export
-
 get_paginated_data <- function(base_url,
                                headers,
                                query_params = list(),
