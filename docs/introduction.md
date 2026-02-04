@@ -7,14 +7,14 @@
 > ### For End Users
 >
 > **You do NOT need to build, update, or maintain datasets.** This
-> package uses GitHub Actions to automatically update dataframes monthly
+> package uses GitHub Actions to automatically update dataframes daily
 > from the CQC API. Simply install the package from GitHub and use
 > `get_cqc_id_info()` to query any CQC provider or location, or access
-> the automatically-updated merged dataset. :::
+> the automatically-updated merged dataset.
 >
-> # Part 1: For Frontline Users
+> ## Part 1: For Frontline Users
 >
-> ## What is CQC?
+> ### What is CQC?
 >
 > The Care Quality Commission (CQC) is the independent regulator of
 > health and social care services in England. It monitors, inspects, and
@@ -26,12 +26,12 @@
 > make informed choices about their care while also attempting to
 > encourage improvement across the sector.
 >
-> ## Quick Start: What You Need to Know
+> ### Quick Start: What You Need to Know
 >
 > ### Installation
 >
 > The cqcrpack package is available on GitHub and comes with
-> monthly-updated datasets:
+> daily-updated datasets on providers, locations and a combination of the two:
 >
 >     # Install from GitHub (requires devtools or remotes) 
 >     # install.packages("devtools") 
@@ -41,12 +41,12 @@
 >     library(cqcrpack) 
 >
 > **Note:** The package includes pre-processed dataframes that are
-> updated monthly from the CQC API. You always get the latest data when
+> updated daily from the CQC API. You always get the latest data when
 > you install or update the package.
 >
-> ### Main Function: Querying CQC IDs
+> #### Function 1: Querying CQC IDs
 >
-> The primary function you’ll use is `get_cqc_id_info()`. This retrieves
+> The primary function you will use is `get_cqc_id_info()`. This retrieves
 > detailed information for any specific CQC provider or location ID.
 >
 >     library(cqcrpack)  
@@ -60,7 +60,7 @@
 >     # View the results 
 >     print(location_info) 
 >
-> ### Accessing Pre-Built Datasets
+> #### Function 2: Accessing Pre-Built Datasets
 >
 > The package comes with ready-to-use datasets. You can access them
 > directly without any building or updating:
@@ -80,13 +80,13 @@
 >     # Filter for specific criteria 
 >     good_rated <- merged_data[merged_data$overallRating == "Good", ] 
 >
-> ### Common Use Cases
+> #### Common Use Cases
 >
 > **Finding information about a care home:**
 >
 >     care_home_info <- get_cqc_id_info("1-123456789") 
 >
-> **Analyzing ratings in your area:**
+> **Analysing ratings in your area:**
 >
 >     all_data <- merge_provider_location() 
 >     local_services <- all_data[all_data$postalCode %in% c("SW1A", "SW1B"), ]
@@ -96,7 +96,7 @@
 >
 >     provider_details <- get_cqc_id_info("1-PROVIDER123") 
 >
-> # Part 2: Background Technical Information
+> ## Part 2: Background Technical Information
 >
 > > [!WARNING]
 > >
@@ -105,7 +105,7 @@
 > > The following sections describe the internal workings of the
 > > package. **Regular users do not need to use these functions or
 > > maintain any data.** The package is automatically updated via GitHub
-> > Actions, and the data is pre-built and maintained for you. :::
+> > Actions, and the data is pre-built and maintained for you.
 > >
 > > ## How This Package Works
 > >
@@ -114,7 +114,7 @@
 > > The package retrieves data directly from the official CQC API
 > > endpoints through an automated GitHub Actions workflow. The
 > > repository contains pre-processed dataframes that are automatically
-> > updated monthly via scheduled runs. These dataframes include
+> > updated daily via scheduled runs. These dataframes include
 > > comprehensive datasets about providers and locations, with their
 > > registration details, ratings, inspection dates, and service
 > > characteristics.
@@ -131,9 +131,9 @@
 > > The `cqcrpack` package provides a complete toolkit for accessing and
 > > managing CQC regulatory data. It covers both location-level data
 > > (individual care facilities and services) and provider-level data
-> > (organizations that run these services). The package handles the
-> > full data lifecycle including initial bulk data collection, caching
-> > for efficiency, incremental updates to keep data current, and
+> > (organisations that run these services). The package handles the
+> > full data lifecycle including initial bulk data collection, caching IDs and JSONs,
+> > incremental updates to keep data current, and
 > > merging capabilities to create comprehensive datasets linking
 > > providers with their locations.
 > >
@@ -141,10 +141,10 @@
 > >
 > > Working directly with the CQC API requires handling pagination, rate
 > > limits, JSON parsing, and complex data structures. This package
-> > eliminates these challenges by providing high-level functions that
+> > eliminates these challenges by providing functions that
 > > handle all the complexity behind the scenes. It offers:
 > >
-> > - Efficient bulk data collection with local caching to avoid
+> > - Bulk data collection with local caching to avoid
 > >   redundant API calls
 > >
 > > - Automated incremental updates that capture only changes since the
@@ -212,7 +212,7 @@
 > > The package uses GitHub Actions to automatically maintain current
 > > data:
 > >
-> > 1.  **Scheduled Updates**: Runs monthly to check for new data from
+> > 1.  **Scheduled Updates**: Runs daily at midnight to check for new data from
 > >     the CQC API
 > >
 > > 2.  **Incremental Updates**: Uses `get_incremental_changes()`,
@@ -221,7 +221,7 @@
 > >
 > > 3.  **Data Storage**:
 > >
-> >     - Processed dataframes → package’s `data/` folder
+> >     - Processed dataframes → package’s `data/`folder
 > >
 > >     - Raw JSON files →
 > >       [cqc-data-repo](https://github.com/Care-Policy-and-Evaluation-Centre/cqc-data-repo.git)
@@ -233,7 +233,7 @@
 > >
 > > ## Manual Update Workflow (Optional)
 > >
-> > For troubleshooting or manual updates, here’s the process that
+> > For troubleshooting or manual updates, here is the process that
 > > GitHub Actions runs automatically:
 > >
 > >     library(cqcrpack)  
