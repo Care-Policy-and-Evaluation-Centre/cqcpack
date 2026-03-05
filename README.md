@@ -21,22 +21,5 @@ publicly available CQC Syndication API.
 2. Copy the link from the [releases page](https://github.com/Care-Policy-and-Evaluation-Centre/cqcpack/releases).
 3. Run ```remotes::install_github("Care-Policy-and-Evaluation-Centre/cqcpack")``` to install the package.
 4. Run ```library(cqcpack)``` to load the package. 
-5. To load in your preferred dataset you can run ```provider_df```, ```location_df``` or `merged_df```.
-
-### Dependencies
-The package will automatically install required dependencies when you install it. Key dependencies include:
-- `httr` - For API requests
-- `jsonlite` - For JSON parsing
-- `dplyr` - For data manipulation
-
-### Troubleshooting
-If installation fails with dependency errors:
-
-```r
-# Install dependencies manually first
-install.packages(c("httr", "jsonlite", "dplyr"))
-
-# Then install cqcpack
-install.packages("path/to/cqcpack_0.1.2.tar.gz", repos = NULL, type = "source")
-```
+5. To load in your preferred dataset you can run ```provider_df```, ```location_df``` or ```merged_df```.
 
