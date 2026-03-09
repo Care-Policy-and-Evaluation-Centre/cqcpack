@@ -54,6 +54,22 @@ jobs:
           CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
         run: |
           Rscript tests/helper-update.R
+
+      - name: Rebuild package dataframes
+        env:
+          CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
+        run: |
+          Rscript -e '
+            library(cqcpack)
+            update_location_dataset()
+            update_provider_dataset()
+            location_df <- build_location_df()
+            provider_df <- build_provider_df()
+            merged_df <- merge_provider_location()
+            save(location_df, file="data/location_df.rda")
+            save(provider_df, file="data/provider_df.rda")
+            save(merged_df, file="data/merged_df.rda")
+          '
       
       - name: Commit and push data repo
         working-directory: cqc-data
@@ -68,6 +84,6 @@ jobs:
         run: |
           git config user.name "CQC Data Bot"
           git config user.email "noreply@github.com"
-          git add DESCRIPTION data/*.rda
+          git add DESCRIPTION data/location_df.rda data/provider_df.rda data/merged_df.rda
           git commit -m "Package update with latest CQC data: $(date -u +%Y-%m-%d)" || echo "No changes"
           git push origin main
