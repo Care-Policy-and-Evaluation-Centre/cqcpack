@@ -49,8 +49,16 @@ if(interactive() || Sys.getenv("GITHUB_ACTIONS") == "true") {
   # MERGING DF
   #-------------------------------------------------------------------------------
   cat("4. Merging provider and location data...\n")
-  merged_data <- merge_provider_location()
-  cat("   Merged dataset rows:", nrow(merged_data), "\n\n")
+  location_df <- build_location_df()
+  provider_df <- build_provider_df()
+  merged_df <- merge_provider_location()
+  cat("   Merged dataset rows:", nrow(merged_df), "\n\n")
+  
+  cat("4b. Saving updated dataframes to package...\n")
+  save(location_df, file = "data/location_df.rda")
+  save(provider_df, file = "data/provider_df.rda")
+  save(merged_df, file = "data/merged_df.rda")
+  cat("   Dataframes saved.\n\n")
   
   #-------------------------------------------------------------------------------
   # COPY CHANGED JSONs TO DATA REPO (if running in GitHub Actions)

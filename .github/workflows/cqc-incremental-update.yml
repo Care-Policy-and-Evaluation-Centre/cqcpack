@@ -55,22 +55,6 @@ jobs:
         run: |
           Rscript tests/helper-update.R
 
-      - name: Rebuild package dataframes
-        env:
-          CQC_DATA_REPO_PATH: ${{ github.workspace }}/cqc-data
-        run: |
-          Rscript -e '
-            library(cqcpack)
-            update_location_dataset()
-            update_provider_dataset()
-            location_df <- build_location_df()
-            provider_df <- build_provider_df()
-            merged_df <- merge_provider_location()
-            save(location_df, file="data/location_df.rda")
-            save(provider_df, file="data/provider_df.rda")
-            save(merged_df, file="data/merged_df.rda")
-          '
-      
       - name: Commit and push data repo
         working-directory: cqc-data
         run: |
