@@ -9,10 +9,11 @@ format:
     toc-depth: 3
     code-fold: false
     theme: cosmo
+    embed-resources: true
   gfm:
     toc: true
 ---
-
+git status
 ::: {.callout-note}
 
 ## Part 1: For Frontline Users
