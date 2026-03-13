@@ -18,8 +18,8 @@ publicly available CQC Syndication API.
 
 ## Installation
 1. Ensure you have R (version 4.0.0 or higher) installed on your system.
-2. Copy the link from the [releases page](https://github.com/Care-Policy-and-Evaluation-Centre/cqcpack/releases).
-3. Run ```remotes::install_github("Care-Policy-and-Evaluation-Centre/cqcpack")``` to install the package.
-4. Run ```library(cqcpack)``` to load the package. 
-5. To load in your preferred dataset you can run ```provider_df```, ```location_df``` or ```merged_df```.
+2. Run ```remotes::install_github("Care-Policy-and-Evaluation-Centre/cqcpack")``` to install the package.
+3. Run ```library(cqcpack)``` to load the package. 
+4. To load in your preferred dataset you can run ```provider_df```, ```location_df``` or ```merged_df```.
+5. In order to access the latest dataset each day, reinstall the package to retrieve the updated datasets.
 
