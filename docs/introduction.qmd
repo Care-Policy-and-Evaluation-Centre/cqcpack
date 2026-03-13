@@ -93,6 +93,7 @@ head(merged_df, 5)
 #| include: true
 #| message: false
 #| warning: false
+#| eval: false
 
 library(knitr)
 
@@ -123,6 +124,7 @@ The table below shows the first 6 rows of the merged dataset, displaying some re
 #| include: true
 #| message: false
 #| warning: false
+#| eval: false
 
 # Select the most useful columns to display
 sample_cols <- c(
@@ -158,6 +160,7 @@ The primary function you will use is get_cqc_id_info(). This retrieves detailed 
 #| include: true
 #| message: false
 #| warning: false
+#| eval: false
         
 # For a location ID
 location_info <- get_cqc_id_info("1-10000302982", id_type = "location")
@@ -172,10 +175,11 @@ print(provider_info)
 ### Visualising Provider Size
 
 As an example, I am interested in inspecting adult social care locations that fall under the social care organisation category type and also have beds.
-```{r}
+```{r beds-data}
 #| include: true
 #| message: false
 #| warning: false
+#| eval: false
 
 unique(merged_df$location_type) # eg. Primary Medical Services, Social Care Org, Independent Ambulance, etc.
 table(merged_df$location_type[merged_df$location_numberOfBeds > 0])
@@ -190,10 +194,11 @@ beds_data <- merged_df[
 summary(beds_data$location_numberOfBeds)
 ```
 
-```{r}
+```{r ratings-visual}
 #| include: true
 #| message: false
 #| warning: false
+#| eval: false
 
 library(ggplot2)
 
@@ -227,10 +232,10 @@ ggplot(beds_data,
     na.value = "#EEEEEE"
   ) +
   labs(
-    title = "CQC Ratings by Provider Size",
-    subtitle = "Adult social care residential providers only",
-    x = "Provider Size",
-    y = "Number of Providers",
+    title = "CQC Ratings by Location Size",
+    subtitle = "Adult social care residential locations only",
+    x = "Location Size",
+    y = "Number of Locations",
     fill = "Overall Rating"
   ) +
   theme_minimal()
@@ -238,7 +243,12 @@ ggplot(beds_data,
 
 The graph demonstrates that a majority of social care locations operate with less than 100 beds. It also shows that "Good" is the most commonly received rating across location sizes. Relative to them, there are far fewer locations that receive "Inadequate" or event "Requires Improvement" ratings. There also seems to be quie a few locations with "NA" ratings which means they may be newly registered and/or their inspection may be in progress. 
 
-```{r}
+```{r na-locations}
+#| include: true
+#| message: false
+#| warning: false
+#| eval: false
+
 na_rated <- beds_data[is.na(beds_data$location_currentRatings_overall_rating), ]
 na_dates <- as.Date(na_rated$location_registrationDate)
 summary(na_dates)

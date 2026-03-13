@@ -1,6 +1,6 @@
 # CQC Data Package
-
-2026-03-09
+Ritwika Das
+2026-03-13
 
 - [Summary](#summary)
 
@@ -96,6 +96,8 @@
 > ### Analysing ratings in your area
 >
 > ``` r
+> library(knitr)
+>
 > # Summary of ratings
 > table(merged_df$location_currentRatings_overall_rating)
 >
@@ -162,6 +164,88 @@
 > print(location_info)
 > print(provider_info)
 > ```
+>
+> ### Visualising Provider Size
+>
+> As an example, I am interested in inspecting adult social care
+> locations that fall under the social care organisation category type
+> and also have beds.
+>
+> ``` r
+> unique(merged_df$location_type) # eg. Primary Medical Services, Social Care Org, Independent Ambulance, etc.
+> table(merged_df$location_type[merged_df$location_numberOfBeds > 0])
+> summary(merged_df$location_numberOfBeds)
+>
+> beds_data <- merged_df[
+>   merged_df$location_type == "Social Care Org" & 
+>   merged_df$location_inspectionDirectorate == "Adult social care" &
+>   merged_df$location_numberOfBeds > 0 &
+>   !is.na(merged_df$location_numberOfBeds),
+> ]
+> summary(beds_data$location_numberOfBeds)
+> ```
+>
+> ``` r
+> library(ggplot2)
+>
+> beds_data$size_category <- cut(
+>   beds_data$location_numberOfBeds,
+>   breaks = c(0, 10, 40, 100, 200, Inf),
+>   labels = c(
+>     "Small (1-10)", 
+>     "Medium (11-40)", 
+>     "Large (41-100)", 
+>     "Very Large (101-200)", 
+>     "Extra Large (200+)"
+>   ),
+>   right = TRUE
+> )
+>
+> ggplot(beds_data, 
+>   aes(x = size_category, fill = location_currentRatings_overall_rating)) +
+>   geom_bar(position = "stack") +
+>   scale_y_continuous(labels = scales::comma) +
+>   scale_fill_manual(
+>     values = c(
+>       "Outstanding" = "#006747",
+>       "Good" = "#78BE20",
+>       "Requires improvement" = "#F5A623",
+>       "Inadequate" = "#DA1E28",
+>       "Inspected but not rated" = "#546E7A",
+>       "No published rating" = "#CFD8DC",
+>       "Insufficient evidence to rate" = "#9E9E9E"
+>     ),
+>     na.value = "#EEEEEE"
+>   ) +
+>   labs(
+>     title = "CQC Ratings by Location Size",
+>     subtitle = "Adult social care residential locations only",
+>     x = "Location Size",
+>     y = "Number of Locations",
+>     fill = "Overall Rating"
+>   ) +
+>   theme_minimal()
+> ```
+>
+> The graph demonstrates that a majority of social care locations
+> operate with less than 100 beds. It also shows that “Good” is the most
+> commonly received rating across location sizes. Relative to them,
+> there are far fewer locations that receive “Inadequate” or event
+> “Requires Improvement” ratings. There also seems to be quie a few
+> locations with “NA” ratings which means they may be newly registered
+> and/or their inspection may be in progress.
+>
+> ``` r
+> na_rated <- beds_data[is.na(beds_data$location_currentRatings_overall_rating), ]
+> na_dates <- as.Date(na_rated$location_registrationDate)
+> summary(na_dates)
+> ```
+>
+> However, upon closer inspecition, unrated providers span registration
+> dates from 2010 to the present day, which suggests that missing
+> ratings could be due to newly registered services awaiting their first
+> inspection and also deregistered or closed services. It could also
+> evidence historical data gaps in CQC records.
 
 > [!NOTE]
 >
