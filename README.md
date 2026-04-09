@@ -23,3 +23,15 @@ publicly available CQC Syndication API.
 4. To load in your preferred dataset you can run ```provider_df```, ```location_df``` or ```merged_df```.
 5. In order to access the latest dataset each day, reinstall the package to retrieve the updated datasets.
 
+## Version 0.1.0
+This release provides a live, up-to-date snapshot of CQC data. When a change is recorded for a given location or provider on their API, the dataset in the package is updated in place to reflect the most current information available.
+
+Current Limitations: A consequence of this design is that historical and longitudinal data are not readily accessible. Two partial workarounds exist within the current version:
+1. JSON archives: Records of locations and providers with detected changes are stored as JSON files in cqc-data-repo. However, these are not structured as analysis ready historical datasets.
+2. Commit history: Older snapshots can be retrieved from the cqcpack commit history via previous .rda files, though this process is cumbersome and not user-friendly.
+
+Both approaches share a further limitation that coverage only extends as far back as the GitHub Actions workflow has been running (26.10.2026), which at present does not provide a sufficiently long historical span for longitudinal analysis.
+
+## Version 0.2.0
+
+The second release will addresses these limitations with the introduction of a dedicated function for building custom historical datasets. Users will be able to specify a time span and select variables of interest. This will allow reproducible longitudinal analysis directly within R. This feature is being developed as part of CPEC's ongoing programme of work to systematically track and map providers and locations that have been updated, reassigned, or closed over time.
