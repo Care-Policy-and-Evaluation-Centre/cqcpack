@@ -26,3 +26,4 @@ Depends:
     R (>= 4.2)
 Date: 2025-01-10
 DataBuilt: 2026-04-08
+Config/testthat/edition: 3
