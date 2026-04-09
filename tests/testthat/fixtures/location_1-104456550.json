@@ -1,0 +1,219 @@
+{
+  "locationId": "1-104456550",
+  "providerId": "1-101608859",
+  "organisationType": "Location",
+  "type": "Social Care Org",
+  "name": "Visitation of Our Lady Residential Care Home",
+  "onspdCcgCode": "E38000256",
+  "onspdCcgName": "NHS North West London CCG",
+  "onspdIcbCode": "E54000027",
+  "onspdIcbName": "NHS North West London Integrated Care Board",
+  "odsCode": "VL1MC",
+  "registrationStatus": "Registered",
+  "registrationDate": "2011-01-07",
+  "dormancy": "N",
+  "onspdLatitude": 51.5209141,
+  "onspdLongitude": -0.3044582,
+  "careHome": "Y",
+  "inspectionDirectorate": "Adult social care",
+  "postalAddressLine1": "57 Mount Park Road",
+  "postalAddressLine2": "Ealing",
+  "postalAddressTownCity": "London",
+  "region": "London",
+  "postalCode": "W5 2RU",
+  "uprn": "12085330",
+  "mainPhoneNumber": "02089972030",
+  "registeredManagerAbsentDate": "2024-07-01",
+  "numberOfBeds": 5,
+  "constituency": "Ealing Central and Acton",
+  "localAuthority": "Ealing",
+  "lastInspection": {
+    "date": "2022-01-18"
+  },
+  "lastReport": {
+    "publicationDate": "2022-02-23"
+  },
+  "relationships": [],
+  "locationTypes": [],
+  "regulatedActivities": [
+    {
+      "name": "Accommodation for persons who require nursing or personal care",
+      "code": "RA2",
+      "contacts": []
+    }
+  ],
+  "gacServiceTypes": [
+    {
+      "name": "Residential homes",
+      "description": "Care home service without nursing"
+    }
+  ],
+  "specialisms": [
+    {
+      "name": "Caring for adults over 65 yrs"
+    }
+  ],
+  "inspectionCategories": [
+    {
+      "code": "S1",
+      "primary": "true",
+      "name": "Residential social care"
+    }
+  ],
+  "inspectionAreas": [],
+  "currentRatings": {
+    "overall": {
+      "rating": "Good",
+      "reportDate": "2017-11-22",
+      "reportLinkId": "07045f9e-2da3-4ab2-bdb1-660ce985cc1b",
+      "keyQuestionRatings": [
+        {
+          "name": "Safe",
+          "rating": "Good",
+          "reportDate": "2017-11-22",
+          "reportLinkId": "07045f9e-2da3-4ab2-bdb1-660ce985cc1b"
+        },
+        {
+          "name": "Well-led",
+          "rating": "Good",
+          "reportDate": "2017-11-22",
+          "reportLinkId": "07045f9e-2da3-4ab2-bdb1-660ce985cc1b"
+        },
+        {
+          "name": "Caring",
+          "rating": "Good",
+          "reportDate": "2017-11-22",
+          "reportLinkId": "07045f9e-2da3-4ab2-bdb1-660ce985cc1b"
+        },
+        {
+          "name": "Responsive",
+          "rating": "Good",
+          "reportDate": "2017-11-22",
+          "reportLinkId": "07045f9e-2da3-4ab2-bdb1-660ce985cc1b"
+        },
+        {
+          "name": "Effective",
+          "rating": "Good",
+          "reportDate": "2017-11-22",
+          "reportLinkId": "07045f9e-2da3-4ab2-bdb1-660ce985cc1b"
+        }
+      ]
+    },
+    "reportDate": "2017-11-22"
+  },
+  "historicRatings": [
+    {
+      "reportDate": "2022-02-23",
+      "reportLinkId": "fa6faaf6-709d-4ef8-8d1b-349ed80b1df6",
+      "overall": {
+        "rating": "Inspected but not rated",
+        "keyQuestionRatings": [
+          {
+            "name": "Safe",
+            "rating": "Inspected but not rated"
+          }
+        ]
+      }
+    },
+    {
+      "reportDate": "2016-11-08",
+      "reportLinkId": "27a94787-454a-45c3-a1ba-ad2efaaaf5f8",
+      "overall": {
+        "rating": "Requires improvement",
+        "keyQuestionRatings": [
+          {
+            "name": "Safe",
+            "rating": "Requires improvement"
+          },
+          {
+            "name": "Well-led",
+            "rating": "Requires improvement"
+          },
+          {
+            "name": "Caring",
+            "rating": "Good"
+          },
+          {
+            "name": "Responsive",
+            "rating": "Good"
+          },
+          {
+            "name": "Effective",
+            "rating": "Good"
+          }
+        ]
+      }
+    },
+    {
+      "reportDate": "2015-11-26",
+      "reportLinkId": "7288af68-7728-4b5f-bb82-82a63d99e01e",
+      "overall": {
+        "rating": "Requires improvement",
+        "keyQuestionRatings": [
+          {
+            "name": "Safe",
+            "rating": "Requires improvement"
+          },
+          {
+            "name": "Well-led",
+            "rating": "Requires improvement"
+          },
+          {
+            "name": "Caring",
+            "rating": "Good"
+          },
+          {
+            "name": "Responsive",
+            "rating": "Good"
+          },
+          {
+            "name": "Effective",
+            "rating": "Requires improvement"
+          }
+        ]
+      }
+    }
+  ],
+  "reports": [
+    {
+      "linkId": "fa6faaf6-709d-4ef8-8d1b-349ed80b1df6",
+      "reportDate": "2022-02-23",
+      "firstVisitDate": "2022-01-18",
+      "reportUri": "/reports/fa6faaf6-709d-4ef8-8d1b-349ed80b1df6?20220223130000",
+      "reportType": "Location"
+    },
+    {
+      "linkId": "07045f9e-2da3-4ab2-bdb1-660ce985cc1b",
+      "reportDate": "2017-11-22",
+      "firstVisitDate": "2017-10-24",
+      "reportUri": "/reports/07045f9e-2da3-4ab2-bdb1-660ce985cc1b?20211030120000",
+      "reportType": "Location"
+    },
+    {
+      "linkId": "27a94787-454a-45c3-a1ba-ad2efaaaf5f8",
+      "reportDate": "2016-11-08",
+      "firstVisitDate": "2016-10-04",
+      "reportUri": "/reports/27a94787-454a-45c3-a1ba-ad2efaaaf5f8?20211030120000",
+      "reportType": "Location"
+    },
+    {
+      "linkId": "7288af68-7728-4b5f-bb82-82a63d99e01e",
+      "reportDate": "2015-11-26",
+      "firstVisitDate": "2015-10-20",
+      "reportUri": "/reports/7288af68-7728-4b5f-bb82-82a63d99e01e?20210125060755",
+      "reportType": "Location"
+    },
+    {
+      "linkId": "f4191938-a6b3-4f9b-8cc3-6d808f61a676",
+      "reportDate": "2013-07-25",
+      "firstVisitDate": "2013-06-14",
+      "reportUri": "/reports/f4191938-a6b3-4f9b-8cc3-6d808f61a676?20151016191357"
+    },
+    {
+      "linkId": "57f0e28b-ff5f-4374-b21f-469a73ecdb52",
+      "reportDate": "2012-08-29",
+      "firstVisitDate": "2012-07-31",
+      "reportUri": "/reports/57f0e28b-ff5f-4374-b21f-469a73ecdb52?20200430120000"
+    }
+  ]
+}

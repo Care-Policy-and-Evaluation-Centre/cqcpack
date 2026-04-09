@@ -1,0 +1,42 @@
+{
+  "providerId": "1-10000227676",
+  "locationIds": [
+    "1-11958143117",
+    "1-12415390500"
+  ],
+  "organisationType": "Provider",
+  "ownershipType": "Organisation",
+  "type": "Social Care Org",
+  "name": "Healthcare Employment Partners Ltd",
+  "odsCode": "C3JN",
+  "registrationStatus": "Deregistered",
+  "registrationDate": "2021-11-05",
+  "deregistrationDate": "2024-10-16",
+  "companiesHouseNumber": "12904643",
+  "website": "www.healthcareemploymentpartners.co.uk",
+  "postalAddressLine1": "The Grange",
+  "postalAddressLine2": "Romsey Road, Michelmersh",
+  "postalAddressTownCity": "Romsey",
+  "region": "South East",
+  "postalCode": "SO51 0AE",
+  "uprn": "10094214268",
+  "onspdLatitude": 51.0331411,
+  "onspdLongitude": -1.5247069,
+  "onspdIcbCode": "E54000042",
+  "onspdIcbName": "NHS Hampshire and Isle of Wight Integrated Care Board",
+  "mainPhoneNumber": "01733972109",
+  "inspectionDirectorate": "Adult social care",
+  "constituency": "Romsey and Southampton North",
+  "localAuthority": "Hampshire",
+  "contacts": [],
+  "relationships": [],
+  "regulatedActivities": [],
+  "inspectionCategories": [
+    {
+      "code": "S2",
+      "primary": "true",
+      "name": "Community based adult social care services"
+    }
+  ],
+  "inspectionAreas": []
+}
