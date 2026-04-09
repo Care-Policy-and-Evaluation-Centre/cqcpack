@@ -610,7 +610,11 @@ extract_location_row <- function(file, json_dir = NULL, all_specialisms = NULL, 
 
           contacts <- reg_activities$contacts[[i]]
 
-          if (is.null(contacts) || nrow(contacts) == 0) {
+          contacts_empty <- is.null(contacts) ||
+            length(contacts) == 0 ||
+            (is.data.frame(contacts) && nrow(contacts) == 0)
+
+          if (contacts_empty) {
             all_contact_rows <- c(all_contact_rows, list(tibble::tibble(
               activity_name = activity_name,
               activity_code = activity_code,
@@ -681,7 +685,11 @@ extract_location_row <- function(file, json_dir = NULL, all_specialisms = NULL, 
         activity_code <- activity$code %||% NA_character_
         contacts <- activity$contacts
 
-        if (is.null(contacts) || length(contacts) == 0) {
+        contacts_empty <- is.null(contacts) ||
+          length(contacts) == 0 ||
+          (is.data.frame(contacts) && nrow(contacts) == 0)
+
+        if (contacts_empty) {
           all_contact_rows <- c(all_contact_rows, list(tibble::tibble(
             activity_name = activity_name,
             activity_code = activity_code,
