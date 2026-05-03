@@ -1,0 +1,179 @@
+---
+title: "cqcpack: An R Package for Accessing Care Quality Commission Data"
+date: "April 2026"
+output:
+  beamer_presentation:
+    theme: "Madrid"
+    colortheme: "default"
+    fonttheme: "structurebold"
+    slide_level: 2
+header-includes:
+  - \definecolor{navyblue}{RGB}{0, 32, 96}
+  - \definecolor{lightnavy}{RGB}{0, 70, 160}
+  - \setbeamercolor{palette primary}{bg=navyblue, fg=white}
+  - \setbeamercolor{palette secondary}{bg=lightnavy, fg=white}
+  - \setbeamercolor{palette tertiary}{bg=navyblue, fg=white}
+  - \setbeamercolor{palette quaternary}{bg=navyblue, fg=white}
+  - \setbeamercolor{frametitle}{bg=navyblue, fg=white}
+  - \setbeamercolor{block title}{bg=navyblue, fg=white}
+  - \setbeamercolor{block body}{bg=blue!5, fg=black}
+  - \setbeamercolor{itemize item}{fg=navyblue}
+  - \setbeamercolor{itemize subitem}{fg=lightnavy}
+  - \usepackage{booktabs}
+  - \setbeamertemplate{headline}{}
+  - \setbeamertemplate{footline}{\leavevmode\hbox{\begin{beamercolorbox}[wd=.333\paperwidth,ht=2.5ex,dp=1ex,center]{palette primary}\usebeamerfont{author in head/foot}\insertshortdate\end{beamercolorbox}\begin{beamercolorbox}[wd=.334\paperwidth,ht=2.5ex,dp=1ex,center]{palette primary}\usebeamerfont{title in head/foot}\textbf{cqcpack}\end{beamercolorbox}\begin{beamercolorbox}[wd=.333\paperwidth,ht=2.5ex,dp=1ex,center]{palette primary}\usebeamerfont{author in head/foot}\insertframenumber\,/\,\inserttotalframenumber\end{beamercolorbox}}\vskip0pt}
+  - \setbeamertemplate{navigation symbols}{}
+---
+
+```{r setup, include=FALSE}
+remotes::install_github("Care-Policy-and-Evaluation-Centre/cqcpack")
+library(cqcpack)
+n_locations <- length(unique(location_df$locationId))
+n_providers <- length(unique(provider_df$providerId))
+```
+
+## Background
+
+**The Care Quality Commission (CQC)**
+
+- Independent regulator of health and social care services in England
+- As of `r format(Sys.Date(), "%d %B %Y")`, has published inspection ratings of `r format(n_locations, big.mark=",")` registered locations and `r format(n_providers, big.mark=",")` registered providers
+- Their ratings are widely regarded as the standard for assessing care quality though there is active research in challenging/improving the metric
+- Consulted by service users, local authorities, commissioners, and researchers
+
+**The Problem**
+
+- CQC data is available via a public API but **does not support bulk downloads**
+- Retrieving all records manually can take **days**
+- CQC updates their records daily, which makes getting **up to date** records tedious
+
+---
+
+## The CQC Syndication API
+
+\begin{center}
+\href{https://api-portal.service.cqc.org.uk/}{\includegraphics[width=0.92\textwidth]{api_screenshot.png}}
+\end{center}
+
+\begin{center}
+\small\textcolor{navyblue}{\url{https://api-portal.service.cqc.org.uk/}}
+\end{center}
+
+---
+
+## What is `cqcpack`?
+
+`cqcpack` provides an **automated pipeline** for accessing CQC data in bulk from
+the publicly accessible Syndication API.
+
+\vspace{0.5em}
+
+**It solves four problems:**
+
+1. Automating API calls
+2. Caching JSON responses
+3. Parsing JSONs into datasets
+4. Incrementally updating changes
+
+\vspace{0.5em}
+
+**Output**
+
+- Location dataset - location_df.rda
+- Provider dataset - provider_df.rda
+- Merged dataset - merged_df.rda
+
+---
+
+## How It Works
+
+**Pipeline**
+
+$$\text{Scrape IDs} \rightarrow \text{Download JSONs} \rightarrow \text{Parse into tibbles} \rightarrow \text{Build \& Merge}$$
+
+\vspace{0.5em}
+
+**Incremental Updates**
+
+- GitHub Actions runs the updates ever night
+- Queries the CQC `/changes` endpoint to fetch only updated records
+- Historical JSON snapshots archived in `cqc-data-repo` for reproducibility
+
+---
+
+## Using the Package
+
+**Installation**
+
+```r
+# Install from GitHub
+remotes::install_github("Care-Policy-and-Evaluation-Centre/cqcpack")
+library(cqcpack)
+```
+
+\vspace{0.5em}
+
+**Look up by ID**
+
+```r
+# For a location ID
+location_info <- get_cqc_id_info("1-10000302982", id_type = "location")
+
+# For a provider ID
+provider_info <- get_cqc_id_info("1-102642938", id_type = "provider")
+```
+
+**For more usages checkout**
+\begin{center}
+\small\textcolor{navyblue}{\url{https://care-policy-and-evaluation-centre.github.io/cqcpack/introduction.html}}
+\end{center}
+
+---
+
+## Research Applications
+
+**Who benefits?**
+
+- **Researchers** - analyse care quality trends and policy impact across England
+- **NHS commissioners** - monitor provider quality within their area
+- **Local authorities** - track care home and community service standards
+- **Policy analysts** - build longitudinal datasets linking ratings to regulatory interventions
+
+\vspace{0.5em}
+
+---
+
+## Summary of First Release
+
+- `cqcpack` provides the first dedicated R interface to the CQC Syndication API
+- Automates the process from ID scraping to creating datasets that are ready to be analysed
+- Daily automated updates and a historical archive to ensure data is always current and reproducible
+- Functions allow users to query individual ID information without any API knowledge
+- Facilitates research into care quality, service accessibility, and health policy across England
+
+\vspace{1em}
+
+## Second Release
+
+**Limitation** 
+
+- Historical and longitudinal data are not readily accessible 
+- JSON archives: Records of locations and providers with detected changes are stored as JSON files in cqc-data-repo
+- Commit history: Older snapshots can be retrieved from the cqcpack commit history via previous .rda files
+
+**In Development**
+
+- Introduction of a dedicated function for building custom historical datasets. 
+- Users will be able to specify a time span and select variables of interest. 
+- Scope: systematically track and map providers and locations that have been updated, reassigned, or closed over time.
+
+\vspace{1em}
+
+---
+
+## Acknowledgement
+
+\begin{center}
+\textcolor{navyblue}{\large This project would not have been possible without the guidance and mentorship of Sam Rickman.}\\[0.4em]
+\small Archived package: \texttt{https://doi.org/10.5281/zenodo.19005826}
+\end{center}
